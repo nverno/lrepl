@@ -2,6 +2,7 @@
 
 #include "linenoise/linenoise.h"
 #include "lauxlib.h"
+#include "lua_traceback2.h"
 
 extern bool lua_repl_blocking;
 extern bool lua_repl_isterminal;

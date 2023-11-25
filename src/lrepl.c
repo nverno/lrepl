@@ -1,32 +1,40 @@
-/*
-  │ │ │  Lua │ │  Copyright © 2004-2021 Lua.org, PUC-Rio. │ │ │ │  Permission is
-  hereby granted, free of charge, to any person obtaining       │ │  a copy of
-  this software and associated documentation files (the             │ │
-  "Software"), to deal in the Software without restriction, including         │
-  │  without limitation the rights to use, copy, modify, merge, publish, │ │
-  distribute, sublicense, and/or sell copies of the Software, and to          │
-  │  permit persons to whom the Software is furnished to do so, subject to │ │
-  the following conditions:                                                   │
-  │ │ │  The above copyright notice and this permission notice shall be │ │
-  included in all copies or substantial portions of the Software.             │
-  │ │ │  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, │ │
-  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF          │
-  │  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. │ │
-  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY        │
-  │  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, │ │
-  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE           │
-  │  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. │ │ │
-  ╚─────────────────────────────────────────────────────────────────────────────*/
+/*─────────────────────────────────────────────────────────────────────────────╝
+│                                                                              │
+│  Lua                                                                         │
+│  Copyright © 2004-2021 Lua.org, PUC-Rio.                                     │
+│                                                                              │
+│  Permission is hereby granted, free of charge, to any person obtaining       │
+│  a copy of this software and associated documentation files (the             │
+│  "Software"), to deal in the Software without restriction, including         │
+│  without limitation the rights to use, copy, modify, merge, publish,         │
+│  distribute, sublicense, and/or sell copies of the Software, and to          │
+│  permit persons to whom the Software is furnished to do so, subject to       │
+│  the following conditions:                                                   │
+│                                                                              │
+│  The above copyright notice and this permission notice shall be              │
+│  included in all copies or substantial portions of the Software.             │
+│                                                                              │
+│  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,             │
+│  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF          │
+│  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.      │
+│  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY        │
+│  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,        │
+│  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE           │
+│  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                      │
+│                                                                              │
+╚─────────────────────────────────────────────────────────────────────────────*/
 #define lua_c
 
 #include "lrepl.h"
 #include "lprefix.h"
+#include "util.h"
 
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "lauxlib.h"
 #include "lua.h"
@@ -50,6 +58,16 @@ struct linenoiseState *lua_repl_linenoise;
 const char *lua_progname;
 static lua_State *globalL;
 static char *g_historypath;
+
+static pthread_mutex_t lua_repl_lock_obj;
+
+void(lua_repl_lock)(void) {
+  pthread_mutex_lock(&lua_repl_lock_obj);
+}
+
+void(lua_repl_unlock)(void) {
+  pthread_mutex_unlock(&lua_repl_lock_obj);
+}
 
 /*
  ** {==================================================================
@@ -149,7 +167,7 @@ void lua_readline_completions(const char *p, linenoiseCompletions *c) {
   }
 }
 
-char *lua_readline_hint(const char *p, const char **ansi1, const char **ansi2) {
+char *lua_readline_hint(const char *p, int *color, int *bold) {
   char *h;
   linenoiseCompletions c = {0};
   lua_readline_completions(p, &c);

@@ -2,4 +2,6 @@
          (projectile-project-test-cmd        . "make test")
          (projectile-project-run-cmd         . "make run")
          (projectile-project-install-cmd     . "make install")
-         (projectile-project-configure-cmd   . "make"))))
+         (projectile-project-configure-cmd   . "make")
+         (projectile-indexing-method         . native)
+         (projectile-git-ignored-command     . ""))))

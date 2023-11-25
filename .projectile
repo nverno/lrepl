@@ -1,2 +1,4 @@
 -build/.cmake
 -rttr
++./lua-5.4.6/src
++./cosmopolitan/third_party/lua
