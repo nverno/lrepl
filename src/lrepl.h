@@ -1,7 +1,7 @@
 #ifndef lrepl_h
 
-#include "linenoise/linenoise.h"
 #include "lauxlib.h"
+#include "linenoise/linenoise.h"
 #include "lua_traceback2.h"
 
 extern bool lua_repl_blocking;

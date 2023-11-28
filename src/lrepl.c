@@ -1,5 +1,5 @@
-/*─────────────────────────────────────────────────────────────────────────────╝
-│                                                                              │
+/**
+───────────────────────────────────────────────────────────────────────────────╝
 │  Lua                                                                         │
 │  Copyright © 2004-2021 Lua.org, PUC-Rio.                                     │
 │                                                                              │
@@ -23,6 +23,7 @@
 │  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                      │
 │                                                                              │
 ╚─────────────────────────────────────────────────────────────────────────────*/
+
 #define lua_c
 
 #include "lrepl.h"
@@ -30,11 +31,11 @@
 #include "util.h"
 
 #include <errno.h>
+#include <pthread.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
 
 #include "lauxlib.h"
 #include "lua.h"
@@ -61,13 +62,9 @@ static char *g_historypath;
 
 static pthread_mutex_t lua_repl_lock_obj;
 
-void(lua_repl_lock)(void) {
-  pthread_mutex_lock(&lua_repl_lock_obj);
-}
+void(lua_repl_lock)(void) { pthread_mutex_lock(&lua_repl_lock_obj); }
 
-void(lua_repl_unlock)(void) {
-  pthread_mutex_unlock(&lua_repl_lock_obj);
-}
+void(lua_repl_unlock)(void) { pthread_mutex_unlock(&lua_repl_lock_obj); }
 
 /*
  ** {==================================================================

@@ -4,3 +4,4 @@ lua-5.4.6/
 tmp.*
 !deps/
 cosmopolitan/
+test/tst

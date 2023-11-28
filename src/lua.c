@@ -1,5 +1,5 @@
-/*─────────────────────────────────────────────────────────────────────────────╝
-│                                                                              │
+/**
+───────────────────────────────────────────────────────────────────────────────╝
 │  Lua                                                                         │
 │  Copyright © 2004-2021 Lua.org, PUC-Rio.                                     │
 │                                                                              │
@@ -26,7 +26,6 @@
 #define lua_c
 
 #include "lprefix.h"
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,18 +68,18 @@ static void print_usage (const char *badoption) {
   else
     lua_writestringerror("unrecognized option '%s'\n", badoption);
   lua_writestringerror(
-  "usage: %s [options] [script [args]]\n"
-  "Available options are:\n"
-  "  -e stat  execute string 'stat'\n"
-  "  -i       enter interactive mode after executing 'script'\n"
-  "  -l name  require library 'name' into global 'name'\n"
-  "  -v       show version information\n"
-  "  -E       ignore environment variables\n"
-  "  -W       turn warnings on\n"
-  "  --       stop handling options\n"
-  "  -        stop handling options and execute stdin\n"
-  ,
-  lua_progname);
+		       "usage: %s [options] [script [args]]\n"
+		       "Available options are:\n"
+		       "  -e stat  execute string 'stat'\n"
+		       "  -i       enter interactive mode after executing 'script'\n"
+		       "  -l name  require library 'name' into global 'name'\n"
+		       "  -v       show version information\n"
+		       "  -E       ignore environment variables\n"
+		       "  -W       turn warnings on\n"
+		       "  --       stop handling options\n"
+		       "  -        stop handling options and execute stdin\n"
+		       ,
+		       lua_progname);
 }
 
 
@@ -91,13 +90,13 @@ static void print_version (void) {
 
 
 /*
-** Create the 'arg' table, which stores all arguments from the
-** command line ('argv'). It should be aligned so that, at index 0,
-** it has 'argv[script]', which is the script name. The arguments
-** to the script (everything after 'script') go to positive indices;
-** other arguments (before the script name) go to negative indices.
-** If there is no script name, assume interpreter's name as base.
-*/
+ ** Create the 'arg' table, which stores all arguments from the
+ ** command line ('argv'). It should be aligned so that, at index 0,
+ ** it has 'argv[script]', which is the script name. The arguments
+ ** to the script (everything after 'script') go to positive indices;
+ ** other arguments (before the script name) go to negative indices.
+ ** If there is no script name, assume interpreter's name as base.
+ */
 static void createargtable (lua_State *L, char **argv, int argc, int script) {
   int i, narg;
   if (script == argc) script = 0;  /* no script name? */
@@ -128,9 +127,9 @@ static int dostring (lua_State *L, const char *s, const char *name) {
 
 
 /*
-** Calls 'require(name)' and stores the result in a global variable
-** with the given name.
-*/
+ ** Calls 'require(name)' and stores the result in a global variable
+ ** with the given name.
+ */
 static int dolibrary (lua_State *L, const char *name) {
   int status;
   lua_getglobal(L, "require");
@@ -143,8 +142,8 @@ static int dolibrary (lua_State *L, const char *name) {
 
 
 /*
-** Push on the stack the contents of table 'arg' from 1 to #arg
-*/
+ ** Push on the stack the contents of table 'arg' from 1 to #arg
+ */
 static int pushargs (lua_State *L) {
   int i, n;
   if (lua_getglobal(L, "arg") != LUA_TTABLE)
@@ -181,53 +180,53 @@ static int handle_script (lua_State *L, char **argv) {
 
 
 /*
-** Traverses all arguments from 'argv', returning a mask with those
-** needed before running any Lua code (or an error code if it finds
-** any invalid argument). 'first' returns the first not-handled argument
-** (either the script name or a bad argument in case of error).
-*/
+ ** Traverses all arguments from 'argv', returning a mask with those
+ ** needed before running any Lua code (or an error code if it finds
+ ** any invalid argument). 'first' returns the first not-handled argument
+ ** (either the script name or a bad argument in case of error).
+ */
 static int collectargs (char **argv, int *first) {
   int args = 0;
   int i;
   for (i = 1; argv[i] != NULL; i++) {
     *first = i;
     if (argv[i][0] != '-')  /* not an option? */
-        return args;  /* stop handling options */
+      return args;  /* stop handling options */
     switch (argv[i][1]) {  /* else check option */
-      case '-':  /* '--' */
-        if (argv[i][2] != '\0')  /* extra characters after '--'? */
-          return has_error;  /* invalid option */
-        *first = i + 1;
-        return args;
-      case '\0':  /* '-' */
-        return args;  /* script "name" is '-' */
-      case 'E':
-        if (argv[i][2] != '\0')  /* extra characters? */
-          return has_error;  /* invalid option */
-        args |= has_E;
-        break;
-      case 'W':
-        if (argv[i][2] != '\0')  /* extra characters? */
-          return has_error;  /* invalid option */
-        break;
-      case 'i':
-        args |= has_i;  /* (-i implies -v) *//* FALLTHROUGH */
-      case 'v':
-        if (argv[i][2] != '\0')  /* extra characters? */
-          return has_error;  /* invalid option */
-        args |= has_v;
-        break;
-      case 'e':
-        args |= has_e;  /* FALLTHROUGH */
-      case 'l':  /* both options need an argument */
-        if (argv[i][2] == '\0') {  /* no concatenated argument? */
+    case '-':  /* '--' */
+      if (argv[i][2] != '\0')  /* extra characters after '--'? */
+        return has_error;  /* invalid option */
+      *first = i + 1;
+      return args;
+    case '\0':  /* '-' */
+      return args;  /* script "name" is '-' */
+    case 'E':
+      if (argv[i][2] != '\0')  /* extra characters? */
+        return has_error;  /* invalid option */
+      args |= has_E;
+      break;
+    case 'W':
+      if (argv[i][2] != '\0')  /* extra characters? */
+        return has_error;  /* invalid option */
+      break;
+    case 'i':
+      args |= has_i;  /* (-i implies -v) *//* FALLTHROUGH */
+    case 'v':
+      if (argv[i][2] != '\0')  /* extra characters? */
+        return has_error;  /* invalid option */
+      args |= has_v;
+      break;
+    case 'e':
+      args |= has_e;  /* FALLTHROUGH */
+    case 'l':  /* both options need an argument */
+      if (argv[i][2] == '\0') {  /* no concatenated argument? */
           i++;  /* try next 'argv' */
           if (argv[i] == NULL || argv[i][0] == '-')
             return has_error;  /* no next argument or it is another option */
-        }
-        break;
-      default:  /* invalid option */
-        return has_error;
+      }
+      break;
+    default:  /* invalid option */
+      return has_error;
     }
   }
   *first = i;  /* no script name */
@@ -236,30 +235,30 @@ static int collectargs (char **argv, int *first) {
 
 
 /*
-** Processes options 'e' and 'l', which involve running Lua code, and
-** 'W', which also affects the state.
-** Returns 0 if some code raises an error.
-*/
+ ** Processes options 'e' and 'l', which involve running Lua code, and
+ ** 'W', which also affects the state.
+ ** Returns 0 if some code raises an error.
+ */
 static int runargs (lua_State *L, char **argv, int n) {
   int i;
   for (i = 1; i < n; i++) {
     int option = argv[i][1];
     lua_assert(argv[i][0] == '-');  /* already checked */
     switch (option) {
-      case 'e':  case 'l': {
-        int status;
-        const char *extra = argv[i] + 2;  /* both options need an argument */
-        if (*extra == '\0') extra = argv[++i];
-        lua_assert(extra != NULL);
-        status = (option == 'e')
-                 ? dostring(L, extra, "=(command line)")
-                 : dolibrary(L, extra);
-        if (status != LUA_OK) return 0;
-        break;
-      }
-      case 'W':
-        lua_warning(L, "@on", 0);  /* warnings on */
-        break;
+    case 'e':  case 'l': {
+      int status;
+      const char *extra = argv[i] + 2;  /* both options need an argument */
+      if (*extra == '\0') extra = argv[++i];
+      lua_assert(extra != NULL);
+      status = (option == 'e')
+               ? dostring(L, extra, "=(command line)")
+               : dolibrary(L, extra);
+      if (status != LUA_OK) return 0;
+      break;
+    }
+    case 'W':
+      lua_warning(L, "@on", 0);  /* warnings on */
+      break;
     }
   }
   return 1;
@@ -282,9 +281,9 @@ static int handle_luainit (lua_State *L) {
 
 
 /*
-** Do the REPL: repeatedly read (load) a line, evaluate (call) it, and
-** print any results.
-*/
+ ** Do the REPL: repeatedly read (load) a line, evaluate (call) it, and
+ ** print any results.
+ */
 static void doREPL (lua_State *L) {
   int status;
   const char *oldprogname = lua_progname;
@@ -293,7 +292,7 @@ static void doREPL (lua_State *L) {
   for (;;) {
     if (lua_repl_isterminal)
       linenoiseEnableRawMode(0);
- TryAgain:
+TryAgain:
     status = lua_loadline(L);
     if (status == -2 && errno == EAGAIN) {
       errno = 0;
@@ -328,9 +327,9 @@ static void doREPL (lua_State *L) {
 
 
 /*
-** Main body of stand-alone interpreter (to be called in protected mode).
-** Reads the options and handles them all.
-*/
+ ** Main body of stand-alone interpreter (to be called in protected mode).
+ ** Reads the options and handles them all.
+ */
 static int pmain (lua_State *L) {
   int argc = (int)lua_tointeger(L, 1);
   char **argv = (char **)lua_touserdata(L, 2);
