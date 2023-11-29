@@ -1,12 +1,12 @@
-local M = {}
+M = {}
 M["a"] = 1
 M["b"] = "foo"
 M["c"] = false
 M["d"] = nil
 
-function tst(a, b)
+function add(a, b)
   local res = a + b
-  print("[LUA]: tst("..a..", "..b..") called")
+  print("[LUA]: add("..a..", "..b..") called")
   return res
 end
 
