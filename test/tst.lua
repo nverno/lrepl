@@ -2,7 +2,7 @@ M = {}
 M["a"] = 1
 M["b"] = "foo"
 M["c"] = false
-M["d"] = nil
+M["d"] = "ddd"
 
 function add(a, b)
   local res = a + b

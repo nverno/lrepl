@@ -3,7 +3,7 @@ LUA_COVERAGE ?= no
 
 MSG = @printf "%b %b\n" "\e[32;1mMAKE\e[0m" "\e[37;1m$(1)\e[0m"
 
-all: lua linenoise
+all: lua linenoise readline
 
 .make-prerequisites:
 	@touch $@
@@ -21,6 +21,12 @@ ifneq ($(shell sh -c '[ -f .make-ldflags ] && cat .make-ldflags || echo none'), 
 	-(echo "$(LDFLAGS)" > .make-ldflags)
 .make-prerequisites: .make-ldflags
 endif
+
+readline: .make-prerequisites
+	$(call MSG,"readline")
+	cd readline; [ ! -f Makefile ] && ./configure; $(MAKE)
+
+.PHONY: readline
 
 linenoise: .make-prerequisites
 	$(call MSG,"linenoise")
@@ -40,16 +46,13 @@ ifeq ($(LUA_COVERAGE),yes)
   LUA_LDFLAGS += -fprofile-arcs -ftest-coverage
 endif
 
-# lua's Makefile defines AR="ar rcu", which is unusual, and makes it more
-# challenging to cross-compile lua (and redis).  These defines make it easier
-# to fit redis into cross-compilation environments, which typically set AR.
-AR      = ar
-ARFLAGS = rc
+# AR      = ar
+# ARFLAGS = rc
 
 lua: .make-prerequisites
 	$(call MSG,"lua")
 	cd lua && \
-	$(MAKE) all CFLAGS="$(LUA_CFLAGS)" MYLDFLAGS="$(LUA_LDFLAGS)" AR="$(AR) $(ARFLAGS)"
+	$(MAKE) all CFLAGS="$(LUA_CFLAGS)" MYLDFLAGS="$(LUA_LDFLAGS)" #AR="$(AR) $(ARFLAGS)"
 
 .PHONY: lua
 
@@ -57,3 +60,4 @@ lua: .make-prerequisites
 distclean:
 	-(cd linenoise && $(MAKE) clean) >/dev/null || true
 	-(cd lua && $(MAKE) clean) >/dev/null || true
+	-(cd readline && $(MAKE) clean) >/dev/null || true

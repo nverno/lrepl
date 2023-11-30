@@ -3,6 +3,7 @@ clang++
 -isystem/usr/include/x86_64-linux-gnu/c++/12
 -isystem/usr/include/c++/12
 -I./deps
--I./lua-5.4.6/src
--DLUA_USE_POSIX
+-I./deps/lua
+-DLUA_USE_LINUX
 -DLUA_USE_READLINE
+-DLUA_ANSI

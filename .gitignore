@@ -5,3 +5,4 @@ tmp.*
 !deps/
 cosmopolitan/
 test/tst
+src/lua

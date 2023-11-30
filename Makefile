@@ -1,11 +1,24 @@
+include defaults.mk
 
 LUA_DIR = $(CURDIR)/deps/lua
 
-CXXFLAGS ?= -I./deps -I$(LUA_DIR)/src -L$(LUA_DIR)/src
+MYLUA_FLAGS = -DLUA_USE_LINUX -DLUA_USE_READLINE -DLUA_ANSI
+MYINC       = -I$(LUA_DIR) -L$(LUA_DIR)
+# MYLDFLAGS   = $(LOCAL) -Wl,-E
+MYLIBS      = -ldl -lreadline
+
+CC       = gcc
+CXXFLAGS = -Wall -O2 -fno-stack-protector -fno-common -march=native \
+		$(LOCAL) $(MYLUA_FLAGS) $(MYINC)
+CFLAGS   = $(CWARNSC) -std=c99 $(CXXFLAGS)
+LIBS     = -llua -lm
 
 .PHONY: all install deps
 all:
 	@
+
+src/lua: src/lua.c
+	$(CC) $(CFLAGS) $^ -o $@ $(MYLIBS) $(LIBS)
 
 install: deps
 deps:
@@ -22,8 +35,8 @@ test/tst: $(LUA_LIB) test/tst.cpp
 # LUA_SRC_URL = https://www.lua.org/ftp/lua-$(LUA_VERSION).tar.gz
 # LUA_LIB     = $(LUA_DIR)/src/liblua.a
 
-# $(LUA_LIB):
-# 	@$(MAKE) -C $(LUA_DIR) linux-readline
+$(LUA_LIB):
+	@$(MAKE) -C $(LUA_DIR) linux-readline
 # $(LUA_DIR): lua-$(LUA_VERSION).tar.gz
 # 	@tar xvf $^
 

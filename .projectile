@@ -1,4 +1,8 @@
 -build/.cmake
 -rttr
-+./lua-5.4.6/src
++./src
++./test
 +./cosmopolitan/third_party/lua
++./deps/linenoise
++./deps/readline
++./deps/lua
