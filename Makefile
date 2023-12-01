@@ -8,7 +8,7 @@ MYINC       = -I$(LUA_DIR) -L$(LUA_DIR)
 MYLIBS      = -ldl -lreadline
 
 CC       = gcc
-CXXFLAGS = -Wall -O2 -fno-stack-protector -fno-common -march=native \
+CXXFLAGS = -ggdb3 -O0 -Wall -fno-stack-protector -fno-common -march=native \
 		$(LOCAL) $(MYLUA_FLAGS) $(MYINC)
 CFLAGS   = $(CWARNSC) -std=c99 $(CXXFLAGS)
 LIBS     = -llua -lm
@@ -21,6 +21,7 @@ src/lua: src/lua.c
 	$(CC) $(CFLAGS) $^ -o $@ $(MYLIBS) $(LIBS)
 
 install: deps
+export LUA_DEBUG=yes
 deps:
 	@git submodule init
 	$(MAKE) -C $(CURDIR)/deps
@@ -51,7 +52,7 @@ $(LUA_LIB):
 
 .PHONY: clean distclean
 clean:
-	$(RM) -r *~ *.core *.o *.out *.exe 
+	$(RM) -r *~ *.core *.o *.out *.exe test/tst src/lua
 
 distclean: clean
 	$(RM) -rf $$(git ls-files --others --ignored --exclude-standard)

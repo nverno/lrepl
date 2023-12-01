@@ -471,7 +471,7 @@ static void lua_readline_addcompletion(readlineCompletions *completions,
                             (completions->len + 2) * sizeof(*p)))) {
     completions->cvec = p;
     completions->cvec[completions->len++] = s;
-    completions->cvec[completions->len] = NULL;
+    // completions->cvec[completions->len] = NULL;
   }
 }
 
@@ -649,6 +649,7 @@ static int pushline(lua_State *L, int firstline) {
   char buffer[LUA_MAXINPUT];
   char *b = buffer;
   size_t l;
+  globalL = L;                        // make available for readline completions
   const char *prmt = get_prompt(L, firstline);
   int readstatus = lua_readline(L, b, prmt);
   if (readstatus == 0)
