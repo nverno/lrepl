@@ -1,0 +1,12 @@
+-I./deps
+-I./deps/lua
+-I/usr/include
+-I/usr/include/c++/12
+-I/usr/include/c++/12/backward
+-I/usr/include/x86_64-linux-gnu
+-I/usr/include/x86_64-linux-gnu/c++/12
+-I/usr/lib/gcc/x86_64-linux-gnu/12/include
+-I/usr/local/include
+-DLUA_USE_LINUX
+-DLUA_USE_READLINE
+-DLUA_ANSI
