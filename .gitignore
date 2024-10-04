@@ -2,7 +2,7 @@ build/
 lua-5.4.6/
 *.tar.gz
 tmp.*
-!deps/
+!deps
 cosmopolitan/
 test/tst
 src/lua
